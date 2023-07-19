@@ -3,12 +3,12 @@ package com.skypro.telegram_team.timer;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.skypro.telegram_team.models.Animal;
-import com.skypro.telegram_team.models.Report;
-import com.skypro.telegram_team.models.User;
-import com.skypro.telegram_team.services.AnimalService;
-import com.skypro.telegram_team.services.ReportService;
-import com.skypro.telegram_team.services.UserService;
+import com.skypro.telegram_team.model.Animal;
+import com.skypro.telegram_team.model.Report;
+import com.skypro.telegram_team.model.User;
+import com.skypro.telegram_team.service.AnimalService;
+import com.skypro.telegram_team.service.ReportService;
+import com.skypro.telegram_team.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -30,7 +30,6 @@ public class Timer {
     private final ReportService reportService;
     private final UserService userService;
 
-
     /**
      * Проверка и изменение статуса пользователей. У пользователей есть следующие состояния:
      * SEARCH - ищет животное для усыновления.
@@ -43,10 +42,9 @@ public class Timer {
      * PROBATION - испытательный срок 30 дней, устанавливается автоматически при связывании животного с пользователем,
      * а так же при продлении испытательного срока на срок указанный волонтером.
      */
-//    @Scheduled(cron = "0 32 13 * * *")// demo
+    //@Scheduled(cron = "0 32 13 * * *")// demo
     @Scheduled(cron = "0 0 9-18/3 * * *")
     void checkAndChangeUsersStatus() {
-
         List<User> acceptedUsers = changeStateAcceptedToAdoptedAndCollect();
         List<Animal> acceptedAnimals = changeStateAcceptedToHappyEndAndCollect();
 
@@ -70,7 +68,6 @@ public class Timer {
         saveChangesOfUsers.forEach(user -> userService.update(user, user.getId())); // обновляем изменения в БД
         saveChangesOfAnimals.forEach(animal -> animalService.update(animal, animal.getId()));
     }
-
 
     List<User> changeStateAcceptedToAdoptedAndCollect() {
         log.info("Проверяем и изменяем статус пользователей со статусом ACCEPTED на ADOPTED");
@@ -160,9 +157,8 @@ public class Timer {
                 peek(animal -> animal.setState(Animal.AnimalStateEnum.HAPPY_END)).toList();
     }
 
-//    @Scheduled(cron = "0 02 06 * * *")// demo
+    //@Scheduled(cron = "0 02 06 * * *")// demo
     @Scheduled(cron = "0 0 8-21/4 * * *")
-// every 4 hours from 8 to 21 (cron = "0 40 21 * * *")
     void checkingDailyAndTwoDaysReportFromUsers() {
         log.info("Проверяем отчеты за день и за два дня от пользователей");
 
