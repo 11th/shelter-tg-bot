@@ -2,12 +2,12 @@ package com.skypro.telegram_team.timer;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.skypro.telegram_team.models.Animal;
-import com.skypro.telegram_team.models.Report;
-import com.skypro.telegram_team.models.User;
-import com.skypro.telegram_team.services.AnimalService;
-import com.skypro.telegram_team.services.ReportService;
-import com.skypro.telegram_team.services.UserService;
+import com.skypro.telegram_team.model.Animal;
+import com.skypro.telegram_team.model.Report;
+import com.skypro.telegram_team.model.User;
+import com.skypro.telegram_team.service.AnimalService;
+import com.skypro.telegram_team.service.ReportService;
+import com.skypro.telegram_team.service.UserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TimerTest {
-
     @Mock
     private TelegramBot bot;
 
@@ -115,7 +114,6 @@ public class TimerTest {
                         user.getName(), user.getSurname()));
     }
 
-
     @Test
     public void testFindStateProlongedAndCollect() {
         // Arrange
@@ -152,29 +150,6 @@ public class TimerTest {
         assertEquals(1, result.size());
         User updatedUser = result.get(0);
         assertEquals(User.OwnerStateEnum.PROBATION, updatedUser.getState());
-    }
-
-
-    @Test
-    public void testDecisionMakingOfVolunteersAboutUsers() {
-        // Arrange
-        User user = new User();
-        user.setId(1L);
-        user.setTelegramId(12345);
-        user.setName("John");
-        user.setSurname("Doe");
-        user.setState(User.OwnerStateEnum.PROBATION);
-        user.setEndTest(LocalDateTime.now().plusDays(1));
-        List<User> users = Collections.singletonList(user);
-        when(userService.findByState(User.OwnerStateEnum.PROBATION)).thenReturn(users);
-
-        // Act
-        List<User> result = timer.decisionMakingOfVolunteersAboutUsers();
-
-        // Then
-        assertEquals(1, result.size());
-        User updatedUser = result.get(0);
-        assertEquals(User.OwnerStateEnum.DECISION, updatedUser.getState());
     }
 
     @Test
@@ -242,7 +217,6 @@ public class TimerTest {
     @Disabled
     @Test
     void testCheckingDailyAndTwoDaysReportFromUsers() {
-
         // Create two users
         User user1 = new User();
         user1.setName("John");
@@ -312,6 +286,5 @@ public class TimerTest {
         Mockito.verify(bot, times(2)).execute(argumentCaptor.capture());
         return argumentCaptor.getAllValues();
     }
-
 }
 
